@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valorant Tournament Hub</title>
+    
+    <!-- This pulls in Tailwind CSS for instant styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- This pulls in the Supabase tools directly, no installation needed -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-8 font-sans">
+
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-5xl font-black text-center mb-12 tracking-tight text-red-500">
+            VALORANT TOURNAMENT
+        </h1>
+        
+        <div id="content-area" class="bg-gray-800 p-8 rounded-lg border border-gray-700 text-center shadow-xl">
+            <p class="text-gray-400 animate-pulse">Checking database connection...</p>
+        </div>
+    </div>
+
+    <script>
+        // 1. Plug your keys in right here (We'll hide them later if needed, but this gets you moving)
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+
+        // 2. Initialize the connection
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 3. Test the connection by asking for the 'teams' table we made earlier
+        async function checkConnection() {
+            const contentArea = document.getElementById('content-area');
+            
+            try {
+                const { data, error } = await supabase.from('teams').select('*');
+                
+                if (error) throw error;
+                
+                contentArea.innerHTML = `
+                    <h2 class="text-2xl font-bold text-green-400 mb-2">System Online!</h2>
+                    <p class="text-gray-300">Successfully connected to Supabase.</p>
+                    <p class="text-sm text-gray-500 mt-4">Found ${data.length} teams in the database.</p>
+                `;
+            } catch (err) {
+                contentArea.innerHTML = `
+                    <h2 class="text-2xl font-bold text-red-500 mb-2">Connection Failed</h2>
+                    <p class="text-gray-300">${err.message}</p>
+                `;
+            }
+        }
+
+        // Run the check
+        checkConnection();
+    </script>
+</body>
+</html>
